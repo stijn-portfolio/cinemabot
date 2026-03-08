@@ -1,0 +1,33 @@
+# Secrets
+appsettings.json
+appsettings.Development.json
+!appsettings.Example.json
+
+# Build artifacts
+bin/
+obj/
+*.dll
+*.exe
+*.pdb
+
+# User-specific files
+.vs/
+.vscode/
+*.user
+*.suo
+
+# Database files
+*.db
+*.db-shm
+*.db-wal
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Ngrok
+ngrok.exe
+
+# NuGet packages
+*.nupkg
+packages/
