@@ -18,7 +18,7 @@ A transactional chatbot for cinema ticket booking that runs in Microsoft Teams. 
 - Update and cancel bookings
 - Adaptive cards for rich visual experience in Teams
 
-## Project Structure
+## Project structure
 
 ```
 CinemaBot/
@@ -38,22 +38,22 @@ CinemaBot/
 - Microsoft Teams account
 - Ngrok (for local development)
 
-## Database Schema
+## Database schema
 
 - **Movies** (Id, Title, Description, Genre, Duration, Rating, PosterUrl)
 - **Screenings** (Id, MovieId, DateTime, Room, TotalSeats, AvailableSeats, Price)
 - **Bookings** (Id, ScreeningId, CustomerName, Email, Phone, Seats, BookingCode, BookedAt)
 
-## Setup Instructions
+## Setup instructions
 
-### 1. Clone Repository
+### 1. Clone repository
 
 ```bash
 git clone <repo-url>
 cd CinemaBot
 ```
 
-### 2. Configure API Keys
+### 2. Configure API keys
 
 Create `appsettings.json` files based on `appsettings.Example.json` in each project:
 
@@ -112,7 +112,7 @@ ngrok http 5000
 
 Copy the HTTPS URL for Teams bot configuration.
 
-### 6. Run Teams Bot
+### 6. Run Teams bot
 
 ```bash
 cd AzureBot-solution/CinemaBot
@@ -122,7 +122,7 @@ dotnet run
 
 Configure bot messaging endpoint in Azure Bot registration with ngrok URL.
 
-## Development Workflow
+## Development workflow
 
 This project follows a feature branch workflow:
 
@@ -141,7 +141,7 @@ git tag -a phase1-complete -m "Phase 1: Cinema.API completed"
 git push origin main --tags
 ```
 
-## Implementation Phases
+## Implementation phases
 
 - **Phase 1:** Cinema.API - Database API with TMDb integration ✅
 - **Phase 2:** Bot.Core - CinemaPlugin with 7 Semantic Kernel functions ✅
