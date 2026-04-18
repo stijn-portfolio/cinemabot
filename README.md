@@ -1,163 +1,82 @@
-# Cinema Ticket Booking Bot
+# CinemaBot
 
-**Challenge 2 - Transactional Chatbot**
-**Course:** AI.NET - Thomas More
-**Tech Stack:** .NET, OpenAI, Semantic Kernel, Bot Framework, Microsoft Teams
+Een conversational chatbot voor bioscooptickets boeken via Microsoft Teams, aangedreven door OpenAI en Semantic Kernel.
 
----
+> Schoolproject voor AI.NET - Thomas More Hogeschool (score: 19/20)
 
-## Overview
+| Welkom + menu | Films overzicht |
+|---------------|-----------------|
+| ![Welcome](docs/screenshots/cinemabot-welcome.png) | ![Films](docs/screenshots/cinemabot-films.png) |
 
-A transactional chatbot for cinema ticket booking that runs in Microsoft Teams. Users can browse movies, check showtimes, and book tickets through natural language conversation with adaptive card visualizations.
+| Genre filter (actiefilms) | Filmdetail + vertoning |
+|---------------------------|------------------------|
+| ![Genre](docs/screenshots/cinemabot-genre-filter.png) | ![Detail](docs/screenshots/cinemabot-detail-vertoning.png) |
+
+| Ticket boeken | Boeking wijzigen |
+|---------------|------------------|
+| ![Boeking](docs/screenshots/cinemabot-boeking.png) | ![Wijziging](docs/screenshots/cinemabot-wijziging.png) |
+
+## Tech stack
+
+| Laag | Technologie |
+|------|-------------|
+| AI | OpenAI GPT-4o-mini, Microsoft Semantic Kernel |
+| Bot | Bot Framework SDK, Microsoft Teams |
+| Backend | ASP.NET Core 8.0 Web API |
+| Database | SQLite + Entity Framework Core |
+| UI | Adaptive Cards (rich visuals in Teams) |
+| Film data | TMDb API (posters, beschrijvingen, ratings) |
 
 ## Features
 
-- Browse movies with TMDb poster images
-- Check showtimes by movie and date
-- Book tickets with customer details
-- Update and cancel bookings
-- Adaptive cards for rich visual experience in Teams
+- **Natuurlijke taal** - vraag in gewoon Nederlands naar films, vertoningen en boekingen
+- **Films browsen** - overzicht met TMDb posters, genre, rating en beschrijving
+- **Genre filter** - "toon actiefilms" filtert intelligent op genre
+- **Vertoningen checken** - datum, zaal, beschikbare plaatsen en prijs
+- **Tickets boeken** - volledige boekingsflow met bevestigingscode
+- **Boeking wijzigen** - aantal stoelen aanpassen met herberekening
+- **Boeking annuleren** - annuleer via boekingscode
+- **Adaptive Cards** - rijke visuele kaarten met filmposters en boekingsoverzicht
+- **Conversational context** - bot onthoudt context binnen het gesprek
 
-## Project structure
-
-```
-CinemaBot/
-├── AzureBot-solution/       # Bot Framework EchoBot (Teams integration)
-├── Bot-solution/            # Semantic Kernel backend
-│   ├── Bot.API/            # ASP.NET Core Web API
-│   └── Bot.Core/           # Class Library with CinemaPlugin
-└── API-solution/           # Database API
-    └── Cinema.API/         # ASP.NET Core Web API with EF Core
-```
-
-## Requirements
-
-- .NET 8.0 SDK
-- OpenAI API key
-- TMDb API key (free)
-- Microsoft Teams account
-- Ngrok (for local development)
-
-## Database schema
-
-- **Movies** (Id, Title, Description, Genre, Duration, Rating, PosterUrl)
-- **Screenings** (Id, MovieId, DateTime, Room, TotalSeats, AvailableSeats, Price)
-- **Bookings** (Id, ScreeningId, CustomerName, Email, Phone, Seats, BookingCode, BookedAt)
-
-## Setup instructions
-
-### 1. Clone repository
+## Opstarten
 
 ```bash
-git clone <repo-url>
-cd CinemaBot
-```
-
-### 2. Configure API keys
-
-Create `appsettings.json` files based on `appsettings.Example.json` in each project:
-
-**Cinema.API/appsettings.json:**
-```json
-{
-  "ConnectionStrings": {
-    "DefaultConnection": "Data Source=cinema.db"
-  },
-  "TMDb": {
-    "ApiKey": "your_tmdb_api_key",
-    "ImageBaseUrl": "https://image.tmdb.org/t/p/w500"
-  }
-}
-```
-
-**Bot.API/appsettings.json:**
-```json
-{
-  "OpenAI": {
-    "ApiKey": "sk-proj-...",
-    "Model": "gpt-4o-mini"
-  },
-  "CinemaAPI": {
-    "BaseUrl": "http://localhost:5001"
-  }
-}
-```
-
-### 3. Run Cinema.API
-
-```bash
+# Cinema API starten (database + TMDb data)
 cd API-solution/Cinema.API
-dotnet restore
-dotnet ef database update
-dotnet run
-```
+dotnet run                    # http://localhost:5001
 
-API will be available at `http://localhost:5001`
-
-### 4. Run Bot.API
-
-```bash
+# Bot API starten (Semantic Kernel + OpenAI)
 cd Bot-solution/Bot.API
-dotnet restore
-dotnet run
-```
+dotnet run                    # http://localhost:5000
 
-API will be available at `http://localhost:5000`
-
-### 5. Setup Ngrok
-
-```bash
+# Ngrok tunnel voor Teams
 ngrok http 5000
 ```
 
-Copy the HTTPS URL for Teams bot configuration.
+Configureer API keys in `appsettings.json` (zie `appsettings.Example.json`).
 
-### 6. Run Teams bot
+## Projectstructuur
 
-```bash
-cd AzureBot-solution/CinemaBot
-dotnet restore
-dotnet run
+```
+CinemaBot/
+  API-solution/
+    Cinema.API/               REST API voor films, vertoningen, boekingen
+      Controllers/            API endpoints
+      Data/                   DbContext + TMDb seeding
+      Models/                 Movie, Screening, Booking entities
+  Bot-solution/
+    Bot.API/                  Semantic Kernel chatbot
+      Services/               KernelService (OpenAI + plugins)
+      Cards/                  AdaptiveCardBuilders (rich UI)
+    Bot.Core/                 CinemaPlugin (7 SK functions)
+    Bot.TestConsole/          Console test client
 ```
 
-Configure bot messaging endpoint in Azure Bot registration with ngrok URL.
+## Architectuur
 
-## Development workflow
-
-This project follows a feature branch workflow:
-
-```bash
-# Start new phase
-git checkout -b feature/phase1-cinema-api
-
-# Make changes and commit
-git add .
-git commit -m "Add Movie model with EF Core configuration"
-
-# Complete phase
-git checkout main
-git merge feature/phase1-cinema-api
-git tag -a phase1-complete -m "Phase 1: Cinema.API completed"
-git push origin main --tags
-```
-
-## Implementation phases
-
-- **Phase 1:** Cinema.API - Database API with TMDb integration ✅
-- **Phase 2:** Bot.Core - CinemaPlugin with 7 Semantic Kernel functions ✅
-- **Phase 3:** Bot.API - KernelService and AdaptiveCardBuilders
-- **Phase 4:** Teams Integration - EchoBot + Ngrok
-- **Phase 5:** Polish & Demo - Documentation and presentation
-
-## Technologies
-
-- **Backend:** ASP.NET Core 8.0, Entity Framework Core
-- **AI:** OpenAI API (gpt-4o-mini), Microsoft Semantic Kernel
-- **Bot:** Bot Framework SDK, Microsoft Teams
-- **Database:** SQLite
-- **External APIs:** TMDb API (movie data and posters)
-- **Hosting:** Local development with Ngrok tunneling
-
-## License
-
-Educational project for Thomas More AI.NET course.
+- **Semantic Kernel plugins** - 7 functies (films, vertoningen, boekingen, beschikbaarheid, etc.)
+- **AdaptiveCardBuilders** - rijke kaarten voor filmlijsten, boekingsbevestiging, wijzigingen
+- **TMDb integratie** - actuele filmdata met posters bij database seeding
+- **Bot Framework** - Teams integratie via EchoBot + ngrok tunneling
+- **Repository pattern** - EF Core met SQLite voor films, vertoningen en boekingen
